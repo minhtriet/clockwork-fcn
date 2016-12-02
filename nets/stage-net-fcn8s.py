@@ -95,6 +95,8 @@ def make_nets():
         f.write(str(fcn('deploy', 40)))
     with open('stage-cityscapes-fcn8s.prototxt', 'w') as f:
         f.write(str(fcn('deploy', 19)))
+    with open('kitti.prototxt', 'w') as f:
+        f.write(str(fcn('deploy', 19)))
 
 if __name__ == '__main__':
     make_nets()

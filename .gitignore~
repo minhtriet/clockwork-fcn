@@ -9,4 +9,3 @@ __pycache__/
 
 # Temporaries
 .ipynb_checkpoints/
-/datasets/data_road
