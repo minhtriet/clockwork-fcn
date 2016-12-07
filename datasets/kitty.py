@@ -4,7 +4,7 @@ import glob
 import numpy as np
 from PIL import Image
 
-import caffe
+#import caffe
 
 
 class kitty:
@@ -21,21 +21,21 @@ class kitty:
         self.classes = np.array([0, 1])
 
     def list_label_frames(self, split):
-        def file2idx(f):
+        def file2idx(scene, f):
             """Helper to convert file path into frame ID"""
-            city, shot, frame = (os.path.basename(f).split('_')[:3])
-            return "_".join([city, shot, frame])
+            typ, frame = (os.path.basename(f).split('_')[:2])
+            return "_".join([scene, typ, frame])
         frames = []
-        scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/training/{}/image_2/*'.format(self.dir, split))]
+        scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]
         for c in scenes:
 #            files = sorted(glob.glob('{}/gtFine/{}/{}/*labelIds.png'.format(self.dir, split, c)))
-            files = sorted(glob.glob('*.png'))
-            frames.extend([file2idx(f) for f in files])
+            files = sorted(glob.glob('{}/data_road/{}/image_2/{}/*.png'.format(self.dir, split, c)))
+            frames.extend([file2idx(c, f) for f in files])
         return frames
 
     def load_image(self, split, scene, idx):
 #        im = Image.open('{}/images/leftImg8bit/{}/{}/{}_leftImg8bit.png'.format(self.dir, split, city, idx))
-        im = Image.open('{}/images/leftImg8bit/{}/{}/{}_leftImg8bit.png'.format(self.dir, split, scene, idx))
+        im = Image.open('{}/data_road/{}/image_2/{}/{}'.format(self.dir, split, scene, idx))
         return im
 
     def load_label(self):
