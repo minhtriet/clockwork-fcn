@@ -18,27 +18,28 @@ class kitty:
 #        self.classes = [l[0] for l in sorted(labels_and_ids, key=lambda x: x[1])]  # classes in ID order == network output order
 #        self.id2trainId = {label.id: label.trainId for label in labels.labels}  # dictionary mapping from raw IDs to train IDs
 #        self.trainId2color = {label.trainId: label.color for label in labels.labels}  # dictionary mapping train IDs to colors as 3-tuples
-        self.classes = np.array([ 13 , 3 , 1 , 2 , 0 , 1 , 6 , 2])
+        self.classes = np.array([0, 1])
 
-    def list_label_frames(self, split):        
+    def list_label_frames(self, split):
         def file2idx(f):
             """Helper to convert file path into frame ID"""
             city, shot, frame = (os.path.basename(f).split('_')[:3])
             return "_".join([city, shot, frame])
         frames = []
-        cities = [os.path.basename(f) for f in glob.glob('{}/data_road/training/{}/*'.format(self.dir, split))]
-        for c in cities:
-            files = sorted(glob.glob('{}/gtFine/{}/{}/*labelIds.png'.format(self.dir, split, c)))
+        scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/training/{}/image_2/*'.format(self.dir, split))]
+        for c in scenes:
+#            files = sorted(glob.glob('{}/gtFine/{}/{}/*labelIds.png'.format(self.dir, split, c)))
+            files = sorted(glob.glob('*.png'))
             frames.extend([file2idx(f) for f in files])
         return frames
 
-    def load_image(self, split, city, idx):
+    def load_image(self, split, scene, idx):
 #        im = Image.open('{}/images/leftImg8bit/{}/{}/{}_leftImg8bit.png'.format(self.dir, split, city, idx))
-        im = Image.open('/media/remote_home/mtriet/kitti/2011_09_26/2011_09_26_drive_0056_sync/image_00/data/0000000000.png')
+        im = Image.open('{}/images/leftImg8bit/{}/{}/{}_leftImg8bit.png'.format(self.dir, split, scene, idx))
         return im
 
     def load_label(self):
-        return np.array([ 13 , 3 , 1 , 2 , 0 , 1 , 6 , 2])
+        return np.array([ 0, 1])
     
     def preprocess(self, im):
         """
