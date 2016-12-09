@@ -1,11 +1,7 @@
-import sys
 import os
 import glob
 import numpy as np
 from PIL import Image
-
-#import caffe
-
 
 class kitty:
     def __init__(self, data_path):
@@ -34,12 +30,14 @@ class kitty:
         return frames
 
     def load_image(self, split, scene, idx):
-#        im = Image.open('{}/images/leftImg8bit/{}/{}/{}_leftImg8bit.png'.format(self.dir, split, city, idx))
         im = Image.open('{}/data_road/{}/image_2/{}/{}'.format(self.dir, split, scene, idx))
         return im
 
-    def load_label(self):
-        return np.array([ 0, 1])
+    def load_label(self, split, scene, idx):
+        im = Image.open('{}/data_road/{}/gt_image_2/{}/{}'.format(self.dir, split, scene, idx))
+        im = np.array(im, dtype=np.uint8)
+        im = im[np.newaxis, ...]
+        return im
     
     def preprocess(self, im):
         """
