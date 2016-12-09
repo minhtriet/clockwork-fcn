@@ -11,3 +11,6 @@ __pycache__/
 .ipynb_checkpoints/
 /datasets/*.tar.gz
 /datasets/data_road/
+
+# config
+config.yml
