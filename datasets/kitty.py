@@ -7,14 +7,7 @@ class kitty:
     def __init__(self, data_path):
         self.dir = data_path
         self.mean = np.array((72.78044, 83.21195, 73.45286), dtype=np.float32)
-#        # import cityscapes label helper and set up label mappings
-#        sys.path.insert(0, '{}/scripts/helpers/'.format(self.dir))
-#        labels = __import__('labels')
-#        labels_and_ids = [(l.name, l.trainId) for l in labels.labels if l.trainId >= 0 and l.trainId < 255]
-#        self.classes = [l[0] for l in sorted(labels_and_ids, key=lambda x: x[1])]  # classes in ID order == network output order
-#        self.id2trainId = {label.id: label.trainId for label in labels.labels}  # dictionary mapping from raw IDs to train IDs
-#        self.trainId2color = {label.trainId: label.color for label in labels.labels}  # dictionary mapping train IDs to colors as 3-tuples
-        self.classes = np.array([0, 1])
+        self.classes = np.array([-1, 1])
 
     def list_label_frames(self, split):
         def file2idx(scene, f):
@@ -34,11 +27,13 @@ class kitty:
         return im
 
     def load_label(self, split, scene, idx):
-        im = Image.open('{}/data_road/{}/gt_image_2/{}/{}'.format(self.dir, split, scene, idx))
+        idx = idx.split('_')
+        idx.insert(1,'lane')
+        im = Image.open('{}/data_road/{}/gt_image_2/{}/{}'.format(self.dir, split, scene, '_'.join(idx)))
         im = np.array(im, dtype=np.uint8)
         im = im[np.newaxis, ...]
         return im
-    
+
     def preprocess(self, im):
         """
         Preprocess loaded image (by load_image) for Caffe:
