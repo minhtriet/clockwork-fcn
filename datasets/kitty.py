@@ -9,17 +9,20 @@ class kitty:
         self.mean = np.array((72.78044, 83.21195, 73.45286), dtype=np.float32)
         self.classes = np.array([-1, 1])
 
+    # untest
     def list_vids(self, split='training'):
         scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]
         return scenes
     
-    def list_frames(self, split='training', vid):
+    def list_frames(self, vid, split='training'):
         frames = []
         scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]
         for c in scenes:
             files = sorted(glob.glob('{}/data_road/{}/image_2/{}/*.png'.format(self.dir, split, c)))
-            frames.extend([file2idx(c, f) for f in files])
-
+            frames.extend(files)
+        return frames
+    # untest end
+    
     # !deprecated
     def list_label_frames(self, split):
         def file2idx(scene, f):
