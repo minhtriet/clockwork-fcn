@@ -20,7 +20,7 @@ with open("config.yml", 'r') as ymlfile:
 CS = kitty('{}{}'.format(path, 'datasets/'))
 
 def load_layer_diffs(vid):
-    diffs = np.load('{}/data_road/training/image_2/{}/14.npz'.format(CS.dir, vid))
+    diffs = np.load('{}/data_road/training/image_2/{}/diff.npz'.format(CS.dir, vid))
     layers = diffs.keys()
     diffs = np.concatenate([d[..., np.newaxis] for l, d in diffs.iteritems()], axis=-1)
     return layers, diffs
