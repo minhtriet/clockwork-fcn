@@ -60,6 +60,8 @@ for l in layers:
     diffs[l + '-argmax'] = zeros.copy()
 
 for ix, frame_name in enumerate(label_frames):
+for scene in CS.:
+    for index in:
     scene = frame_name.split('_', 1)[0]
     index = frame_name.split('_', 1)[1]
     im = CS.load_image(split, scene, index)    
@@ -95,46 +97,3 @@ for ix, frame_name in enumerate(label_frames):
         feats, argmaxes, data, label = new_feats, new_argmaxes, new_data, new_label    
         
     np.savez('{}/data_road/{}/image_2/{}/{}'.format(CS.dir, split, scene, ix), **diffs)
-
-# calculate score #of different pixels / #of total pixels, output of the layer
-# load frames
-
-def load_layer_diffs(split, scene):
-    diffs = np.load('{}/data_road/{}/image_2/{}/{}/diffs.npz'.format(CS.dir, split, scene))
-    layers = diffs.keys()
-    diffs = np.concatenate([d[..., np.newaxis] for l, d in diffs.iteritems()], axis=-1)
-    return layers, diffs
-
-# show mean differences across layers
-#layers, diffs = load_layer_diffs('training', '02')
-#for layer, diff in zip(layers, diffs.T):
-#    print '{:<20}: {}'.format(layer, np.mean(diff))
-
-#all_diffs = []
-#for vid in sorted(CS.list_label_vids()):
-#    for shot in CS.list_label_shots(vid):
-#        layers, diffs = load_layer_diffs(vid, shot)
-#        all_diffs.append(diffs)
-#all_diff_arr = np.concatenate(all_diffs)
-
-#means = np.zeros((len(all_diffs), len(layers)))
-#for ix, diff in enumerate(all_diffs):
-#    means[ix] = np.mean(diff, axis=0)
-
-#for layer, mean in zip(layers, means.T):
-#    print '{:<20}: {}'.format(layer, np.std(mean))
-
-#vid = random.choice(CS.list_label_vids(class_))
-#shot = random.choice(CS.list_label_shots(class_, vid))
-#print class_, vid, shot
-#
-#layers, diffs = load_layer_diffs(vid, shot)
-#diff_means = np.mean(diffs, axis=0)
-
-#plot_layers = [l for l in layers if 'argmax' in l] + ['label']
-#plot_ix = [layers.index(l) for l in plot_layers]
-
-#plt.figure()
-#plt.title('{} vid {} shot {}'.format(class_, vid, shot))
-#plt.plot(diffs[:, plot_ix] - diff_means[plot_ix])
-#plt.legend(plot_layers)

@@ -8,9 +8,19 @@ class kitty:
         self.dir = data_path
         self.mean = np.array((72.78044, 83.21195, 73.45286), dtype=np.float32)
         self.classes = np.array([-1, 1])
-    
-      
 
+    def list_vids(self, split='training'):
+        scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]
+        return scenes
+    
+    def list_frames(self, split='training', vid):
+        frames = []
+        scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]
+        for c in scenes:
+            files = sorted(glob.glob('{}/data_road/{}/image_2/{}/*.png'.format(self.dir, split, c)))
+            frames.extend([file2idx(c, f) for f in files])
+
+    # !deprecated
     def list_label_frames(self, split):
         def file2idx(scene, f):
             """Helper to convert file path into frame ID"""
@@ -19,7 +29,6 @@ class kitty:
         frames = []
         scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]
         for c in scenes:
-#            files = sorted(glob.glob('{}/gtFine/{}/{}/*labelIds.png'.format(self.dir, split, c)))
             files = sorted(glob.glob('{}/data_road/{}/image_2/{}/*.png'.format(self.dir, split, c)))
             frames.extend([file2idx(c, f) for f in files])
         return frames
