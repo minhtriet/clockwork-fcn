@@ -8,6 +8,8 @@ class kitty:
         self.dir = data_path
         self.mean = np.array((72.78044, 83.21195, 73.45286), dtype=np.float32)
         self.classes = np.array([-1, 1])
+    
+      
 
     def list_label_frames(self, split):
         def file2idx(scene, f):

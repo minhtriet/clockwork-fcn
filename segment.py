@@ -40,18 +40,15 @@ with open("config.yml", 'r') as ymlfile:
 CS = kitty('{}{}'.format(path, 'datasets/'))
 n_cl = len(CS.classes)
 split = 'training'
-scene= '02'
 
 net = caffe.Net('{}{}'.format(path, 'nets/stage-voc-fcn8s.prototxt'),
                 '{}{}'.format(path, 'nets/fcn8s-heavy-pascal.caffemodel'),
                 caffe.TEST)
 
 # pre processor for differencing
-hist_perframe = np.zeros((n_cl, n_cl))
 label_frames = CS.list_label_frames(split)
 layers = filter(lambda l: keep_layer(l), net.blobs.keys())
-feats = [net.blobs[l].data[0].copy() for l in layers]
-argmaxes = [net.blobs[l].data[0].argmax(axis=0).copy() for l in layers if 'score' in l]
+
 # differences: layers, then argmaxes, and last is data and label
 diffs = {}
 zeros = np.zeros((len(label_frames)), dtype=np.float32)
@@ -102,3 +99,42 @@ for ix, frame_name in enumerate(label_frames):
 # calculate score #of different pixels / #of total pixels, output of the layer
 # load frames
 
+def load_layer_diffs(split, scene):
+    diffs = np.load('{}/data_road/{}/image_2/{}/{}/diffs.npz'.format(CS.dir, split, scene))
+    layers = diffs.keys()
+    diffs = np.concatenate([d[..., np.newaxis] for l, d in diffs.iteritems()], axis=-1)
+    return layers, diffs
+
+# show mean differences across layers
+#layers, diffs = load_layer_diffs('training', '02')
+#for layer, diff in zip(layers, diffs.T):
+#    print '{:<20}: {}'.format(layer, np.mean(diff))
+
+#all_diffs = []
+#for vid in sorted(CS.list_label_vids()):
+#    for shot in CS.list_label_shots(vid):
+#        layers, diffs = load_layer_diffs(vid, shot)
+#        all_diffs.append(diffs)
+#all_diff_arr = np.concatenate(all_diffs)
+
+#means = np.zeros((len(all_diffs), len(layers)))
+#for ix, diff in enumerate(all_diffs):
+#    means[ix] = np.mean(diff, axis=0)
+
+#for layer, mean in zip(layers, means.T):
+#    print '{:<20}: {}'.format(layer, np.std(mean))
+
+#vid = random.choice(CS.list_label_vids(class_))
+#shot = random.choice(CS.list_label_shots(class_, vid))
+#print class_, vid, shot
+#
+#layers, diffs = load_layer_diffs(vid, shot)
+#diff_means = np.mean(diffs, axis=0)
+
+#plot_layers = [l for l in layers if 'argmax' in l] + ['label']
+#plot_ix = [layers.index(l) for l in plot_layers]
+
+#plt.figure()
+#plt.title('{} vid {} shot {}'.format(class_, vid, shot))
+#plt.plot(diffs[:, plot_ix] - diff_means[plot_ix])
+#plt.legend(plot_layers)
