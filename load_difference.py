@@ -14,6 +14,8 @@ import yaml
 
 from datasets.kitty import kitty
 
+f, ax = plt.subplots()
+
 with open("config.yml", 'r') as ymlfile:
     path = yaml.load(ymlfile)['path']
 
@@ -37,10 +39,11 @@ for vid in sorted(CS.list_vids()):
     all_diffs.append(diffs)
     plot_layers = [l for l in layers if 'argmax' in l] + ['label']
     plot_ix = [layers.index(l) for l in plot_layers]
-    plt.figure()
-    plt.title('vid {}'.format(vid))
+    #plt.figure()
+    #plt.title('vid {}'.format(vid))
     plt.plot(diffs[:, plot_ix] - diff_means[plot_ix])
     plt.legend(plot_layers)
+    
     plt.savefig('{}/data_road/training/image_2/{}/graph.pdf'.format(CS.dir, vid))
 all_diff_arr = np.concatenate(all_diffs)
 
