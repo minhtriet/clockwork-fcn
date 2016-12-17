@@ -11,8 +11,8 @@ class kitty:
 
     # untest
     def list_vids(self, split='training'):
-        scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]
-        return scenes
+        path = '{}/data_road/{}/image_2/'.format(self.dir, split)        
+        return [ name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) ]
     
     def list_frames(self, vid, split='training'):
         frames = []
