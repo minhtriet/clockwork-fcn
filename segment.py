@@ -4,8 +4,6 @@ import caffe
 
 from lib import run_net
 
-import matplotlib.pyplot as plt
-
 import yaml
 
 from datasets.kitty import kitty
@@ -60,8 +58,6 @@ for l in layers:
     diffs[l + '-argmax'] = zeros.copy()
 
 for ix, frame_name in enumerate(label_frames):
-for scene in CS.:
-    for index in:
     scene = frame_name.split('_', 1)[0]
     index = frame_name.split('_', 1)[1]
     im = CS.load_image(split, scene, index)    

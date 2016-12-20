@@ -4,16 +4,19 @@ import numpy as np
 from PIL import Image
 
 class kitty:
-    def __init__(self, data_path):
-        self.dir = data_path
+    def __init__(self, data_path = ''):
+        if (data_path == ''):
+            self.dir = os.path.dirname(os.path.abspath(__file__))
+        else:
+            self.dir = data_path
         self.mean = np.array((72.78044, 83.21195, 73.45286), dtype=np.float32)
         self.classes = np.array([-1, 1])
 
-    # untest
     def list_vids(self, split='training'):
-        path = '{}/data_road/{}/image_2/'.format(self.dir, split)        
-        return [ name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) ]
+        path = '{}/datasets/data_road/{}/image_2/'.format(self.dir, split)        
+        return [ os.path.join(path, name) for name in os.listdir(path) ]
     
+    # untest
     def list_frames(self, vid, split='training'):
         frames = []
         scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]

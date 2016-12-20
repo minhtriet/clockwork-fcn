@@ -1,4 +1,4 @@
-net: "train_val.prototxt"
+net: "nets/train_kitti.prototxt"
 test_iter: 1000
 test_interval: 4000
 test_initialization: false
