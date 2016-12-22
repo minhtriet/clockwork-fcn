@@ -24,8 +24,8 @@ solver = caffe.SGDSolver('{}/nets/kitti_solver.prototxt'.format(path))
 solver.net.copy_from(weights)
 
 # surgeries
-interp_layers = [k for k in solver.net.params.keys() if 'up' in k]
-surgery.interp(solver.net, interp_layers)
+#interp_layers = [k for k in solver.net.params.keys() if 'up' in k]
+#surgery.interp(solver.net, interp_layers)
 
 # scoring
 #val = np.loadtxt('../data/segvalid11.txt', dtype=str)
