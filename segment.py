@@ -35,7 +35,7 @@ def segsave(net, path):
 with open("config.yml", 'r') as ymlfile:
     path = yaml.load(ymlfile)['path']
 
-CS = kitty('{}{}'.format(path, 'datasets/'))
+CS = kitty()
 n_cl = len(CS.classes)
 split = 'training'
 

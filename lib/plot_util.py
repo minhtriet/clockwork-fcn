@@ -13,15 +13,19 @@ def segshow(im, label, out, n_cl=None):
     plt.tight_layout()
     plt.subplot(1,3,2)
     if n_cl:
-        plt.imshow(label, cmap=segm_cmap, vmin=0, vmax=n_cl - 1)
+#        plt.imshow(label, cmap=segm_cmap, vmin=0, vmax=n_cl - 1)
+        plt.savefig(label, cmap=segm_cmap, vmin=0, vmax=n_cl - 1)
     else:
         plt.imshow(label)
+        plt.savefig(label)
     plt.axis('off')
     plt.tight_layout()
     plt.subplot(1,3,3)
     if n_cl:
-        plt.imshow(out, cmap=segm_cmap, vmin=0, vmax=n_cl - 1)
+#        plt.imshow(out, cmap=segm_cmap, vmin=0, vmax=n_cl - 1)
+        plt.savefig(out, cmap=segm_cmap, vmin=0, vmax=n_cl - 1)
     else:
-        plt.imshow(out)
+#        plt.imshow(out)
+        plt.savefig(out)
     plt.axis('off')
     plt.tight_layout()

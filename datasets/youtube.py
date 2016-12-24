@@ -3,7 +3,7 @@ import glob
 import numpy as np
 import PIL
 from PIL import Image
-
+import ipdb
 
 class youtube:
     def __init__(self, data_path):
@@ -29,32 +29,33 @@ class youtube:
 
     def list_frames(self, class_, vid, shot):
         """List the frames for class_ video vid and particular shot"""
-        frames = [f.split('/')[-1].split('.')[0] for f in glob.glob('{}/v1/{}/data/{}/shots/{}/*.jpg'.format(self.dir, class_, vid, shot))]
+        frames = [f.split('/')[-1].split('.')[0] for f in
+                glob.glob('{}/v1/{}/data/{}/shots/{}/images/*.png'.format(self.dir, class_, vid, shot))]
         frames = [int(f[5:]) for f in frames]
         frames = sorted(frames)
         return frames
 
     def list_label_vids(self, class_):
-        files = [os.path.basename(f) for f in glob.glob('{}/youtube_masks/{}/data/*'.format(self.dir, class_))]
-        dirs = filter(lambda x: os.path.isdir('{}/youtube_masks/{}/data/{}'.format(self.dir, class_, x)), files)
+        files = [os.path.basename(f) for f in glob.glob('{}youtube_masks/{}/data/*'.format(self.dir, class_))]
+        dirs = filter(lambda x: os.path.isdir('{}youtube_masks/{}/data/{}'.format(self.dir, class_, x)), files)
         return dirs
 
     def list_label_shots(self, class_, vid):
         return [os.path.basename(f) for f in glob.glob('{}/youtube_masks/{}/data/{}/shots/*'.format(self.dir, class_, vid))]
 
     def list_label_frames(self, class_, vid, shot):
-        fmt = '{}/youtube_masks/{}/data/{}/shots/{}/labels/*.jpg'.format(self.dir, class_, vid, shot)
+        fmt = '{}youtube_masks/{}/data/{}/shots/{}/labels/*.jpg'.format(self.dir, class_, vid, shot)
         frames = [f.split('/')[-1].split('.')[0] for f in glob.glob(fmt)]
         frames = sorted([int(f) for f in frames])
         return frames
 
     def load_frame(self, class_, vid, shot, idx):
-        im = Image.open('{}/v1/{}/data/{}/shots/{}/frame{:0>4d}.jpg'.format(self.dir, class_, vid, shot, int(idx)))
+        im = Image.open('{}youtube_masks/{}/data/{}/shots/{}/images/{:0>5d}.png'.format(self.dir, class_, vid, shot, int(idx)))
         im = self.resize(im, label=False)
         return np.array(im)
 
     def load_label(self, class_, vid, shot, idx):
-        label = Image.open('{}/youtube_masks/{}/data/{}/shots/{}/labels/{:0>5d}.jpg'.format(self.dir, class_, vid, shot, int(idx)))
+        label = Image.open('{}youtube_masks/{}/data/{}/shots/{}/labels/{:0>5d}.jpg'.format(self.dir, class_, vid, shot, int(idx)))
         label = self.resize(label, label=True)
         return label
 
