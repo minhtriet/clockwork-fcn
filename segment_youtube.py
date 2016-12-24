@@ -5,6 +5,7 @@ import caffe
 
 from lib import run_net
 from lib import score_util
+from lib import plot_util
 
 from datasets.youtube import youtube
 from datasets.pascal_voc import pascal
@@ -12,10 +13,10 @@ from datasets.pascal_voc import pascal
 import os
 
 
-#caffe.set_device(0)
-#caffe.set_mode_gpu()
+caffe.set_device(0)
+caffe.set_mode_gpu()
 
-caffe.set_mode_cpu()
+# caffe.set_mode_cpu()
 
 net = caffe.Net('nets/stage-voc-fcn8s.prototxt',
                 'nets/fcn8s-heavy-pascal.caffemodel',
@@ -79,9 +80,9 @@ def adaptive_clockwork_youtube(thresh):
         out_yt = np.zeros(out.shape, dtype=np.int32)
         for c in YT.classes:
             out_yt[out == PV.classes.index(c)] = YT.classes.index(c)
-
         label = YT.load_label(class_, vid, shot, f)
         label = YT.make_label(label, class_)
+        plot_util.segsave(im, PV.palette(label[0]), PV.palette(out_yt),f)
         hist += score_util.fast_hist(label.flatten(), out_yt.flatten(), n_cl)
 
     acc, cl_acc, mean_iu, fw_iu = score_util.get_scores(hist)
