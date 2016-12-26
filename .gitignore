@@ -14,3 +14,4 @@ __pycache__/
 
 # config
 config.yml
+snapshot/kitti/*

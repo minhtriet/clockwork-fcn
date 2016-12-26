@@ -6,16 +6,16 @@ from PIL import Image
 class kitty:
     def __init__(self, data_path = ''):
         if (data_path == ''):
-            self.dir = os.path.dirname(os.path.abspath(__file__))
+            self.dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         else:
             self.dir = data_path
-        self.mean = np.array((72.78044, 83.21195, 73.45286), dtype=np.float32)
+        self.mean = (104.00698793, 116.66876762, 122.67891434) # imagenet mean
         self.classes = np.array([-1, 1])
 
     def list_vids(self, split='training'):
-        path = '{}/datasets/data_road/{}/image_2/'.format(self.dir, split)        
+        path = '{}/datasets/data_road/{}/image_2/'.format(self.dir, split)
         return [ os.path.join(path, name) for name in os.listdir(path) ]
-    
+
     # untest
     def list_frames(self, vid, split='training'):
         frames = []
@@ -25,7 +25,7 @@ class kitty:
             frames.extend(files)
         return frames
     # untest end
-    
+
     # !deprecated
     def list_label_frames(self, split):
         def file2idx(scene, f):
@@ -66,14 +66,13 @@ class kitty:
         in_ -= self.mean
         in_ = in_.transpose((2, 0, 1))
         return in_
-        
-#    def palette(self, label):
-#        '''
-#        Map trainIds to colors as specified in labels.py
-#        '''
-#        if label.ndim == 3:
-#            label= label[0]
-#        color = np.empty((label.shape[0], label.shape[1], 3))
-#        for k, v in self.trainId2color.iteritems():
-#            color[label == k, :] = v
-#        return color
+
+    def palette(self, label_im):
+        '''
+        Transfer the VOC color palette to an output mask
+        '''
+        if label_im.ndim == 3:
+            label_im = label[0]
+        label = Image.fromarray(label_im, mode='P')
+        label.palette = copy.copy(self.voc_palette)
+        return label

@@ -1,3 +1,4 @@
+name: "RoadDetectionNet"
 layer {
   name: "data"
   type: "Python"
@@ -602,7 +603,7 @@ layer {
   name: "score"
   type: "Crop"
   bottom: "upscore8"
-  bottom: "data"  
+  bottom: "data"
   top: "score"
   crop_param {
     axis: 2
@@ -610,11 +611,11 @@ layer {
  }
 }
 layer {
-  name: "loss"
+  name: "kittyLoss"
   type: "SoftmaxWithLoss"
   bottom: "score"
   bottom: "label"
-  top: "loss"
+  top: "kittyLoss"
   loss_param {
     ignore_label: 255
     normalize: false

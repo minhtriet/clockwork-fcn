@@ -53,7 +53,7 @@ class VOCSegDataLayer(caffe.Layer):
         if len(bottom) != 0:
             raise Exception("Do not define a bottom.")
 
-        # load indices for images and labels        
+        # load indices for images and labels
         self.indices = KT.list_vids()
         self.idx = 0
 
@@ -119,7 +119,7 @@ class VOCSegDataLayer(caffe.Layer):
         idx = idx.replace("umm","umm_road")
         idx = idx.replace("uu","uu_road")
         im = Image.open(idx.replace("image_2","gt_image_2"))
-        # they jujst add lane, road or things here to mess with us
+        im = im.convert('P', palette=Image.ADAPTIVE, colors=3)
         label = np.array(im, dtype=np.uint8)
         label = label[np.newaxis, ...]
         return label

@@ -1,16 +1,20 @@
-net: "nets/train_kitti.prototxt"
-test_iter: 1000
-test_interval: 4000
+train_net: "train_kitti.prototxt"
+test_net: "val.prototxt"
+test_iter: 736
+# make test net, but don't invoke it from the solver itself
+test_interval: 999999999
+display: 20
+average_loss: 20
+lr_policy: "fixed"
+# lr for unnormalized softmax
+base_lr: 1e-14
+# high momentum
+momentum: 0.99
+# no gradient accumulation
+iter_size: 1
+max_iter: 100000
+weight_decay: 0.0005
+snapshot: 4000
+snapshot_prefix: "snapshot"
 test_initialization: false
-display: 40
-average_loss: 40
-base_lr: 0.01
-lr_policy: "step"
-stepsize: 320000
-gamma: 0.96
-max_iter: 10000000
-momentum: 0.9
-weight_decay: 0.0002
-snapshot: 40000
-snapshot_prefix: "kittinet"
-solver_mode: GPU
+solver_mode: CPU
