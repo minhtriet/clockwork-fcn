@@ -115,9 +115,9 @@ class VOCSegDataLayer(caffe.Layer):
         Load label image as 1 x height x width integer array of label indices.
         The leading singleton dimension is required by the loss.
         """
-        idx = idx.replace("um","um_lane")
-        idx = idx.replace("umm","umm_road")
-        idx = idx.replace("uu","uu_road")
+        idx = idx.replace("umm_","umm_road_")
+        idx = idx.replace("um_","um_lane_")
+        idx = idx.replace("uu_","uu_road_")
         im = Image.open(idx.replace("image_2","gt_image_2"))
         im = im.convert('P', palette=Image.ADAPTIVE, colors=3)
         label = np.array(im, dtype=np.uint8)
