@@ -10,7 +10,9 @@ __pycache__/
 # Temporaries
 .ipynb_checkpoints/
 /datasets/*.tar.gz
-/datasets/**/
+/datasets/*/
+!/datasets/*.prototxt
+/nets/*.prototxt
 
 # config
 config.yml
