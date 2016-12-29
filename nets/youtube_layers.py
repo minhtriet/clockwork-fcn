@@ -12,8 +12,8 @@ import numpy as np
 from PIL import Image
 
 import os
-import ipdb
 from youtube import youtube
+import pdb
 
 YT = youtube("{}/datasets".format(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -64,6 +64,9 @@ class YoutubeSegDataLayer(caffe.Layer):
         if 'train' not in self.split:
             self.random = False
 
+
+    def reshape(self, bottom, top):
+        # load image
         # randomization: seed and pick
         if self.random:
             random.seed(self.seed)
@@ -71,8 +74,6 @@ class YoutubeSegDataLayer(caffe.Layer):
             frames = YT.list_label_frames(self.idx[0], self.idx[1], self.idx[2])
             self.idx = self.idx + (frames[random.randint(0, len(frames) - 1)], )
 
-    def reshape(self, bottom, top):
-        # load image
         im = YT.load_frame(self.idx[0], self.idx[1], self.idx[2],
                 self.idx[3])
         in_ = np.array(im, dtype=np.float32)

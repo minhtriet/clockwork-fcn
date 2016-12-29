@@ -17,19 +17,19 @@ class youtube:
 
     def list_vids(self, class_):
         """Returns the ids for the videos in which class_ appears."""
-        files = [os.path.basename(f) for f in glob.glob('{}/v1/{}/data/*'.format(self.dir, class_))]
-        dirs = filter(lambda x: os.path.isdir('{}/v1/{}/data/{}'.format(self.dir, class_, x)), files)
+        files = [os.path.basename(f) for f in glob.glob('{}/youtube_masks/{}/data/*'.format(self.dir, class_))]
+        dirs = filter(lambda x: os.path.isdir('{}/youtube_masks/{}/data/{}'.format(self.dir, class_, x)), files)
         return dirs
 
     def list_shots(self, class_, vid):
         """All shots which contain class_ from video vid."""
         # TODO: verify that the description is correct
-        return [os.path.basename(f) for f in glob.glob('{}/v1/{}/data/{}/shots/*'.format(self.dir, class_, vid))]
+        return [os.path.basename(f) for f in glob.glob('{}/youtube_masks/{}/data/{}/shots/*'.format(self.dir, class_, vid))]
 
     def list_frames(self, class_, vid, shot):
         """List the frames for class_ video vid and particular shot"""
         frames = [f.split('/')[-1].split('.')[0] for f in
-                glob.glob('{}/v1/{}/data/{}/shots/{}/images/*.png'.format(self.dir, class_, vid, shot))]
+                glob.glob('{}/youtube_masks/{}/data/{}/shots/{}/images/*.png'.format(self.dir, class_, vid, shot))]
         frames = [int(f[5:]) for f in frames]
         frames = sorted(frames)
         return frames
@@ -49,6 +49,7 @@ class youtube:
         return frames
 
     def load_frame(self, class_, vid, shot, idx):
+	print "!!!!!!!!!!!!!!!!!!"
         im = Image.open('{}/youtube_masks/{}/data/{}/shots/{}/images/{:0>5d}.png'.format(self.dir, class_, vid, shot, int(idx)))
         im = self.resize(im, label=False)
         return np.array(im)
