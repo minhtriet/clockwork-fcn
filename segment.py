@@ -2,11 +2,13 @@ import numpy as np
 import random
 import caffe
 
-from ... import lib.run_net
+from lib import run_net
 
 import yaml
 
-from kitty import kitty
+from nets import kitty
+
+from PIL import Image
 
 random.seed(0xCAFFE)
 
@@ -35,7 +37,7 @@ caffe.set_mode_cpu()
 with open("config.yml", 'r') as ymlfile:
     path = yaml.load(ymlfile)['path']
 
-CS = kitti()
+CS = kitty.kitty()
 n_cl = len(CS.classes)
 split = 'training'
 
@@ -44,7 +46,8 @@ net = caffe.Net('{}{}'.format(path, 'nets/stage-voc-fcn8s.prototxt'),
                 caffe.TEST)
 
 # pre processor for differencing
-label_frames = CS.list_label_frames(split)
+vid = CS.list_vids()[0]
+label_frames = CS.list_frames(vid)
 layers = filter(lambda l: keep_layer(l), net.blobs.keys())
 
 # differences: layers, then argmaxes, and last is data and label
@@ -58,19 +61,15 @@ for l in layers:
     diffs[l + '-argmax'] = zeros.copy()
 
 for ix, frame_name in enumerate(label_frames):
-    scene = frame_name.split('_', 1)[0]
-    index = frame_name.split('_', 1)[1]
-    im = CS.load_image(split, scene, index)
+    im = Image.open(frame_name)
     # handle first frame
     if (ix == 0):
-        label = CS.load_label(split, scene, index)
         data = run_net.segrun(net, CS.preprocess(im))
         # TODO: hacking
-        data[data == 0] = -1
+        # data[data == 0] = -1
         feats = [net.blobs[l].data[0].copy() for l in layers]
         argmaxes = [net.blobs[l].data[0].argmax(axis=0).copy() for l in layers if 'score' in l]
     else:
-        new_label = CS.load_label(split, scene, index)
         new_data = run_net.segrun(net, CS.preprocess(im))
         new_feats = [net.blobs[l].data[0].copy() for l in layers]
         new_argmaxes = [net.blobs[l].data[0].argmax(axis=0).copy() for l in layers if 'score' in l]
@@ -83,13 +82,12 @@ for ix, frame_name in enumerate(label_frames):
             diffs[l][ix] = rel_diff.mean()
             diffs[l + '-argmax'][ix] = np.array(new_argmaxes[lx] != argmaxes[lx]).mean()
         # TODO: hacking
-        new_data[new_data == 0] = -1
+        # new_data[new_data == 0] = -1
         diffs['data'][ix] = (np.abs(new_data - data) / ((np.abs(new_data) + np.abs(data)) / 2.)).mean()
         print np.unique(data)
         print np.unique(new_data)
 
-        diffs['label'][ix] = np.array(new_label != label).mean()
         # advance over old
-        feats, argmaxes, data, label = new_feats, new_argmaxes, new_data, new_label
+        feats, argmaxes = new_feats, new_argmaxes
 
-    np.savez('{}/data_road/{}/image_2/{}/{}'.format(CS.dir, split, scene, ix), **diffs)
+    np.savez('{}/{}'.format(CS.dir, ix), **diffs)

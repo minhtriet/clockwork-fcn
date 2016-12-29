@@ -12,19 +12,17 @@ class kitty:
         self.mean = (104.00698793, 116.66876762, 122.67891434) # imagenet mean
         self.classes = np.array([-1, 1])
 
-    def list_vids(self, split='training'):
-        path = '{}/datasets/data_road/{}/image_2/'.format(self.dir, split)
+    def list_vids(self):
+        path = '{}/datasets/kitti/'.format(self.dir)
         return [ os.path.join(path, name) for name in os.listdir(path) ]
 
-    # untest
-    def list_frames(self, vid, split='training'):
+    def list_frames(self, vid):
         frames = []
-        scenes = [os.path.basename(f) for f in glob.glob('{}/data_road/{}/image_2/*'.format(self.dir, split))]
-        for c in scenes:
-            files = sorted(glob.glob('{}/data_road/{}/image_2/{}/*.png'.format(self.dir, split, c)))
-            frames.extend(files)
+        path = '{}/{}_drive_0002_sync/image_03/data/'.format(vid,
+                os.path.basename(vid))
+        files = sorted(glob.glob('{}/*.png'.format(path)))
+        frames.extend(files)
         return frames
-    # untest end
 
     # !deprecated
     def list_label_frames(self, split):
