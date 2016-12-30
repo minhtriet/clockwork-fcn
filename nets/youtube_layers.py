@@ -76,16 +76,11 @@ class YoutubeSegDataLayer(caffe.Layer):
 
         im = YT.load_frame(self.idx[0], self.idx[1], self.idx[2],
                 self.idx[3])
-        in_ = np.array(im, dtype=np.float32)
-        in_ = in_[:,:,::-1]
-        in_ -= self.mean
-        self.data = in_.transpose((2,0,1))
+        self.data = YT.preprocess(im)
         # load label
-        im = YT.load_label(self.idx[0], self.idx[1], self.idx[2],
+        label = YT.load_label(self.idx[0], self.idx[1], self.idx[2],
                 self.idx[3])
-        im = im.convert('P', palette=Image.ADAPTIVE, colors=3)
-        self.label = np.array(im, dtype=np.uint8)
-        self.label = self.label[np.newaxis, ...]
+        self.label = YT.make_label(label, class_)
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
@@ -108,25 +103,3 @@ class YoutubeSegDataLayer(caffe.Layer):
     def backward(self, top, propagate_down, bottom):
         pass
 
-
-    def load_image(self, idx):
-        """
-        Load input image and preprocess for Caffe:
-        - cast to float
-        - switch channels RGB -> BGR
-        - subtract mean
-        - transpose to channel x height x width order
-        """
-        im = Image.open("{}/youtube_masks/{}/data/{}shots/{}/images/{}".format(YT.dir, idx[0],
-            idx[1], idx[2], idx[3]))
-        return in_
-
-
-    def load_label(self, idx):
-        """
-        Load label image as 1 x height x width integer array of label indices.
-        The leading singleton dimension is required by the loss.
-        """
-        im = Image.open("{}/youtube_masks/{}/data/{}shots/{}/labels/{}".format(YT.dir, idx[0],
-            idx[1], idx[2], idx[3]))
-        return label

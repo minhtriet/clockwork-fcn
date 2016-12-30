@@ -49,12 +49,13 @@ class youtube:
         return frames
 
     def load_frame(self, class_, vid, shot, idx):
-	print "!!!!!!!!!!!!!!!!!!"
+        print "Opening frame {} {} {}".format(class_, vid, shot, idx)
         im = Image.open('{}/youtube_masks/{}/data/{}/shots/{}/images/{:0>5d}.png'.format(self.dir, class_, vid, shot, int(idx)))
         im = self.resize(im, label=False)
         return np.array(im)
 
     def load_label(self, class_, vid, shot, idx):
+        print "Opening label {} {} {}".format(class_, vid, shot, idx)
         label = Image.open('{}/youtube_masks/{}/data/{}/shots/{}/labels/{:0>5d}.jpg'.format(self.dir, class_, vid, shot, int(idx)))
         label = self.resize(label, label=True)
         return label
