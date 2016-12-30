@@ -13,9 +13,13 @@ from PIL import Image
 
 import os
 from youtube import youtube
+
+from pascal_voc import pascal
+
 import pdb
 
 YT = youtube("{}/datasets".format(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PV = pascal('{}/datasets/VOCdevkit/VOC2012'.format(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import random
 
@@ -78,9 +82,9 @@ class YoutubeSegDataLayer(caffe.Layer):
                 self.idx[3])
         self.data = YT.preprocess(im)
         # load label
-        label = YT.load_label(self.idx[0], self.idx[1], self.idx[2],
-                self.idx[3])
-        self.label = YT.make_label(label, class_)
+        self.label = YT.convert_yt2voc_label(YT.load_label(self.idx[0], self.idx[1], self.idx[2],
+                self.idx[3]), self.idx[0], PV.classes)
+
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)
