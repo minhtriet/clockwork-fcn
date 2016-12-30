@@ -12,10 +12,10 @@ from datasets.pascal_voc import pascal
 import os
 
 
-caffe.set_device(0)
-caffe.set_mode_gpu()
+#caffe.set_device(0)
+#caffe.set_mode_gpu()
 
-# caffe.set_mode_cpu()
+caffe.set_mode_cpu()
 
 net = caffe.Net('nets/stage-voc-fcn8s.prototxt',
                 'nets/snapshot_youtube_iter_96000.caffemodel',
