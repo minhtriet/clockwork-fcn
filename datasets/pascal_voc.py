@@ -16,7 +16,8 @@ class pascal:
                         'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor']
         self.mean = (104.00698793, 116.66876762, 122.67891434)  # imagenet mean
         # for paletting
-        reference_idx = '2008_000666'
+        # reference_idx = '2008_000666'
+	reference_idx = '2008_000595'
         palette_im = Image.open('{}/SegmentationClass/{}.png'.format(
             self.dir, reference_idx))
         self.voc_palette = palette_im.palette

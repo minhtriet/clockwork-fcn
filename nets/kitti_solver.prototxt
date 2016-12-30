@@ -17,4 +17,3 @@ weight_decay: 0.0005
 snapshot: 4000
 snapshot_prefix: "snapshot"
 test_initialization: false
-solver_mode: CPU

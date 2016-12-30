@@ -1,13 +1,12 @@
-import ipdb
 import numpy as np
-
+import pdb
 import caffe
 
 from lib import run_net
 from lib import score_util
 from lib import plot_util
 
-from datasets.youtube import youtube
+from nets.youtube import youtube
 from datasets.pascal_voc import pascal
 
 import os
@@ -19,7 +18,7 @@ caffe.set_mode_gpu()
 # caffe.set_mode_cpu()
 
 net = caffe.Net('nets/stage-voc-fcn8s.prototxt',
-                'nets/fcn8s-heavy-pascal.caffemodel',
+                'nets/snapshot_youtube_iter_96000.caffemodel',
                 caffe.TEST)
 
 path = os.path.dirname(os.path.realpath(__file__))
@@ -62,7 +61,7 @@ def adaptive_clockwork_youtube(thresh):
             is_first = False
 
         # Run to pool4 on current frame
-        im = YT.load_frame(class_, vid, shot, f)
+        im = YT.load_frame(class_, vid, shot, f)	
         run_net.feed_net(net, YT.preprocess(im))
         net.forward(start='conv1_1', end='score_pool4')
         curr_fts = net.blobs['score_pool4'].data[0].copy()
@@ -82,7 +81,7 @@ def adaptive_clockwork_youtube(thresh):
             out_yt[out == PV.classes.index(c)] = YT.classes.index(c)
         label = YT.load_label(class_, vid, shot, f)
         label = YT.make_label(label, class_)
-        plot_util.segsave(im, PV.palette(label[0]), PV.palette(out_yt),f)
+        plot_util.segsave(im, PV.palette(label[0]), PV.palette(out),f)
         hist += score_util.fast_hist(label.flatten(), out_yt.flatten(), n_cl)
 
     acc, cl_acc, mean_iu, fw_iu = score_util.get_scores(hist)
