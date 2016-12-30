@@ -1,4 +1,4 @@
-import ipdb
+#import ipdb
 import numpy as np
 
 import caffe
@@ -7,7 +7,7 @@ from lib import run_net
 from lib import score_util
 from lib import plot_util
 
-from datasets.youtube import youtube
+from nets.youtube import youtube
 from datasets.pascal_voc import pascal
 
 import os
