@@ -12,26 +12,27 @@ from datasets.pascal_voc import pascal
 import os
 
 
-#caffe.set_device(0)
-#caffe.set_mode_gpu()
+caffe.set_device(0)
+caffe.set_mode_gpu()
 
-caffe.set_mode_cpu()
+#caffe.set_mode_cpu()
+
+#net = caffe.Net('nets/stage-voc-fcn8s.prototxt',
+#                'nets/snapshot_youtube_iter_8155.caffemodel',
+#                caffe.TEST)
+
 
 net = caffe.Net('nets/stage-voc-fcn8s.prototxt',
-                'nets/snapshot_youtube_iter_96000.caffemodel',
+                'nets/fcn8s-heavy-pascal.caffemodel',
                 caffe.TEST)
 
 path = os.path.dirname(os.path.realpath(__file__))
 
 YT = youtube('{}/datasets/'.format(path))
-#PV = pascal('/x/PASCAL/VOC2011')
 PV = pascal('{}/datasets/VOCdevkit/VOC2012'.format(path))
 
 n_cl = len(YT.classes)
-# n_cl = 1
 inputs = YT.load_dataset()
-
-CR = 10
 
 def sm_diff(prev_fts, fts):
     prev_m = prev_fts.argmax(axis=0).copy()
@@ -44,18 +45,14 @@ def adaptive_clockwork_youtube(thresh):
     num_frames = 0
     num_update_frames = 0
     class_ = 'car'
-    vid = '0001'
+    vid = '0010'
     shot = '001'
 #    for (class_, vid, shot) in inputs:
     is_first = True
-    for f in YT.list_label_frames(class_, vid, shot):
-        # skip the first 10 frames to align with pipeline
-        if f < 2*CR+1:
-            continue
-
+    for f in YT.list_frames(class_, vid, shot):
         num_frames += 1 # index the total number of frames
         if is_first: # push the 10 frame lag through the net
-            im = YT.load_frame(class_, vid, shot, (f-CR))
+            im = YT.load_frame(class_, vid, shot, f)
             _ = run_net.segrun(net, YT.preprocess(im))
             prev_fts = net.blobs['score_pool4'].data[0].copy()
             is_first = False
@@ -79,16 +76,17 @@ def adaptive_clockwork_youtube(thresh):
         out_yt = np.zeros(out.shape, dtype=np.int32)
         for c in YT.classes:
             out_yt[out == PV.classes.index(c)] = YT.classes.index(c)
-        label = YT.load_label(class_, vid, shot, f)
-        label = YT.make_label(label, class_)
-        plot_util.segsave(im, PV.palette(label[0]), PV.palette(out),f)
-        hist += score_util.fast_hist(label.flatten(), out_yt.flatten(), n_cl)
+#        label = YT.load_label(class_, vid, shot, f)
+#        label = YT.make_label(label, class_)
+#        plot_util.segsave(im, PV.palette(label[0]), PV.palette(out),f)
+        PV.palette(out).save('{}.png'.format(f))
+#        hist += score_util.fast_hist(label.flatten(), out_yt.flatten(), n_cl)
 
-    acc, cl_acc, mean_iu, fw_iu = score_util.get_scores(hist)
-    print 'Adaptive Clockwork: Threshold', thresh, ' Updated {:d}/{:d} frames ({:2.1f}%)'.format(num_update_frames, num_frames, 100.0*num_update_frames/num_frames)
-    print 'acc\t\t cl acc\t\t mIU\t\t fwIU'
-    print '{:f}\t {:f}\t {:f}\t {:f}\t'.format(100*acc, 100*cl_acc, 100*mean_iu, 100*fw_iu)
-    return acc, cl_acc, mean_iu, fw_iu
+#    acc, cl_acc, mean_iu, fw_iu = score_util.get_scores(hist)
+#    print 'Adaptive Clockwork: Threshold', thresh, ' Updated {:d}/{:d} frames ({:2.1f}%)'.format(num_update_frames, num_frames, 100.0*num_update_frames/num_frames)
+#    print 'acc\t\t cl acc\t\t mIU\t\t fwIU'
+#    print '{:f}\t {:f}\t {:f}\t {:f}\t'.format(100*acc, 100*cl_acc, 100*mean_iu, 100*fw_iu)
+#    return acc, cl_acc, mean_iu, fw_iu
 
 adaptive_clockwork_youtube(0.1)
 

@@ -30,8 +30,10 @@ class youtube:
         """List the frames for class_ video vid and particular shot"""
         frames = [f.split('/')[-1].split('.')[0] for f in
                 glob.glob('{}/youtube_masks/{}/data/{}/shots/{}/images/*.png'.format(self.dir, class_, vid, shot))]
-        frames = [int(f[5:]) for f in frames]
+	#frames = [int(f[5:]) for f in frames]
+	frames = [int(f) for f in frames]
         frames = sorted(frames)
+        print frames
         return frames
 
     def list_label_vids(self, class_):
