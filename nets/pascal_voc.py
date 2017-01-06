@@ -13,7 +13,7 @@ class pascal:
         self.classes = ['background', 'aeroplane', 'bicycle', 'bird', 'boat',
                         'bottle', 'bus', 'car', 'cat', 'chair', 'cow',
                         'diningtable', 'dog', 'horse', 'motorbike', 'person',
-                        'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor']
+                        'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor', 'street']
         self.mean = (104.00698793, 116.66876762, 122.67891434)  # imagenet mean
         # for paletting
         reference_idx = '2008_000666'

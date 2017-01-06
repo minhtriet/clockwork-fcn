@@ -4,13 +4,10 @@ import numpy as np
 from PIL import Image
 
 class kitty:
-    def __init__(self, data_path = ''):
-        if (data_path == ''):
-            self.dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        else:
-            self.dir = data_path
+    def __init__(self, data_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))):
+        self.dir = data_path
         self.mean = (104.00698793, 116.66876762, 122.67891434) # imagenet mean
-        self.classes = np.array([-1, 1])
+        self.train_vids = self.list_label_frames("training")
 
     def list_vids(self):
         path = '{}/datasets/kitti/'.format(self.dir)
@@ -24,7 +21,6 @@ class kitty:
         frames.extend(files)
         return frames
 
-    # !deprecated
     def list_label_frames(self, split):
         def file2idx(scene, f):
             """Helper to convert file path into frame ID"""
@@ -41,10 +37,27 @@ class kitty:
         im = Image.open('{}/data_road/{}/image_2/{}/{}'.format(self.dir, split, scene, idx))
         return im
 
+    def change_color(im, origin_color, new_color):
+        im = im.convert('RGBA')
+
+        data = np.array(im)   # "data" is a height x width x 4 numpy array
+        red, green, blue, alpha = data.T # Temporarily unpack the bands for readability
+
+        # Replace white with red... (leaves alpha values alone...)
+        areas = (red == origin_color[0]) & (blue == origin_color[1]) & (green == origin_color[2])
+        data[..., :-1][white_areas.T] = new_color # Transpose back needed
+
+        im2 = Image.fromarray(data)
+        return im2 
+
+
     def load_label(self, split, scene, idx):
         idx = idx.split('_')
         idx.insert(1,'lane')
         im = Image.open('{}/data_road/{}/gt_image_2/{}/{}'.format(self.dir, split, scene, '_'.join(idx)))
+        # change color to fit
+        im = change_color(im, (255, 0, 0), (0, 0, 0))
+        im = change_color(im, (255, 0, 255), (0,64,128))
         im = np.array(im, dtype=np.uint8)
         im = im[np.newaxis, ...]
         return im
@@ -73,4 +86,13 @@ class kitty:
             label_im = label[0]
         label = Image.fromarray(label_im, mode='P')
         label.palette = copy.copy(self.voc_palette)
+        return label
+
+    def to_voc_label(self, label, class_, voc_classes):
+        label = np.array(label, dtype=np.uint8)
+        label = label[np.newaxis, ...]
+        label[label <= self.label_thresh] = 0
+        label[label > self.label_thresh] = voc_classes.index(class_)
+        # everything is background now, street labeled 21
+        label[label < 21] = 0        
         return label

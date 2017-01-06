@@ -12,18 +12,18 @@ import numpy as np
 from PIL import Image
 
 import os
-from youtube import youtube
+from kitty import kitty
 
 from pascal_voc import pascal
 
 import pdb
 
-YT = youtube("{}/datasets".format(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+KT = kitty("{}/datasets".format(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 PV = pascal('{}/datasets/VOCdevkit/VOC2012'.format(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import random
 
-class YoutubeSegDataLayer(caffe.Layer):
+class KittiSegDataLayer(caffe.Layer):
 
     """
     Load (input image, label image) pairs from Kitti
@@ -47,7 +47,7 @@ class YoutubeSegDataLayer(caffe.Layer):
         """
         # config
         params = eval(self.param_str)
-        self.dir = YT.dir
+        self.dir = KT.dir
         self.split = params['split']
         self.mean = np.array(params['mean'])
         self.random = params.get('randomize', True)
@@ -61,7 +61,7 @@ class YoutubeSegDataLayer(caffe.Layer):
             raise Exception("Do not define a bottom.")
 
         # load indices for images and labels
-        self.indices = YT.load_dataset()
+        self.indices = KT.load_dataset()
         self.idx = 0
 
         # make eval deterministic
@@ -74,14 +74,14 @@ class YoutubeSegDataLayer(caffe.Layer):
         # randomization: seed and pick
         if self.random:
             self.idx = self.indices[random.randint(0, len(self.indices) - 1)]
-            frames = YT.list_label_frames(self.idx[0], self.idx[1], self.idx[2])
+            frames = KT.list_label_frames(self.idx[0], self.idx[1], self.idx[2])
             self.idx = self.idx + (frames[random.randint(0, len(frames) - 1)], )
 
-        im = YT.load_frame(self.idx[0], self.idx[1], self.idx[2],
+        im = KT.load_frame(self.idx[0], self.idx[1], self.idx[2],
                 self.idx[3])
-        self.data = YT.preprocess(im)
+        self.data = KT.preprocess(im)
         # load label
-        self.label = YT.convert_yt2voc_label(YT.load_label(self.idx[0], self.idx[1], self.idx[2], self.idx[3]), self.idx[0], PV.classes)
+        self.label = KT.convert_yt2voc_label(KT.load_label(self.idx[0], self.idx[1], self.idx[2], self.idx[3]), self.idx[0], PV.classes)
 
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
