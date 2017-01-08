@@ -18,7 +18,7 @@ from pascal_voc import pascal
 
 import pdb
 
-KT = kitty("{}/datasets".format(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+KT = kitty()
 PV = pascal('{}/datasets/VOCdevkit/VOC2012'.format(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import random
@@ -61,7 +61,7 @@ class KittiSegDataLayer(caffe.Layer):
             raise Exception("Do not define a bottom.")
 
         # load indices for images and labels
-        self.indices = KT.load_dataset()
+        self.indices = KT.list_vids(self.split)
         self.idx = 0
 
         # make eval deterministic
@@ -73,16 +73,12 @@ class KittiSegDataLayer(caffe.Layer):
         # load image
         # randomization: seed and pick
         if self.random:
-            self.idx = self.indices[random.randint(0, len(self.indices) - 1)]
-            frames = KT.list_label_frames(self.idx[0], self.idx[1], self.idx[2])
-            self.idx = self.idx + (frames[random.randint(0, len(frames) - 1)], )
+            self.idx = random.randint(0, len(self.indices) - 1)
 
-        im = KT.load_frame(self.idx[0], self.idx[1], self.idx[2],
-                self.idx[3])
+        im = KT.load_image(self.split, self.indices[self.idx])
         self.data = KT.preprocess(im)
         # load label
-        self.label = KT.convert_yt2voc_label(KT.load_label(self.idx[0], self.idx[1], self.idx[2], self.idx[3]), self.idx[0], PV.classes)
-
+        self.label = KT.to_voc_label(KT.load_label(self.split, self.indices[self.idx]), "street", PV.classes)
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)

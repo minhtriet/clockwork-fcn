@@ -82,7 +82,6 @@ class YoutubeSegDataLayer(caffe.Layer):
         self.data = YT.preprocess(im)
         # load label
         self.label = YT.convert_yt2voc_label(YT.load_label(self.idx[0], self.idx[1], self.idx[2], self.idx[3]), self.idx[0], PV.classes)
-
         # reshape tops to fit (leading 1 is for batch dimension)
         top[0].reshape(1, *self.data.shape)
         top[1].reshape(1, *self.label.shape)

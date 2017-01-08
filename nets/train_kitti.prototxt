@@ -5,10 +5,9 @@ layer {
   top: "data"
   top: "label"
   python_param {
-    module: "voc_layers"
-    layer: "VOCSegDataLayer"
+    module: "kitti_layers"
+    layer: "KittiSegDataLayer"
     param_str: "{\'seed\': 1337, \'split\': \'training\', \'mean\': (104.00699, 116.66877, 122.67892)}"
-
   }
 }
 layer {
