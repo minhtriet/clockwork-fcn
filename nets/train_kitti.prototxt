@@ -226,10 +226,10 @@ layer {
   }
 }
 layer {
-  name: "score_pool3"
+  name: "kitti_score_pool3"
   type: "Convolution"
   bottom: "pool3"
-  top: "score_pool3"
+  top: "kitti_score_pool3"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -334,10 +334,10 @@ layer {
   }
 }
 layer {
-  name: "score_pool4"
+  name: "kitti_score_pool4"
   type: "Convolution"
   bottom: "pool4"
-  top: "score_pool4"
+  top: "kitti_score_pool4"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -494,10 +494,10 @@ layer {
   top: "fc7"
 }
 layer {
-  name: "score_fr"
+  name: "kitti_score_fr"
   type: "Convolution"
   bottom: "fc7"
-  top: "score_fr"
+  top: "kitti_score_fr"
   param {
     lr_mult: 1
     decay_mult: 1
@@ -513,10 +513,10 @@ layer {
   }
 }
 layer {
-  name: "upscore2"
+  name: "kitti_upscore2"
   type: "Deconvolution"
-  bottom: "score_fr"
-  top: "upscore2"
+  bottom: "kitti_score_fr"
+  top: "kitti_upscore2"
   param {
     lr_mult: 0
   }
@@ -530,8 +530,8 @@ layer {
 layer {
   name: "score_pool4c"
   type: "Crop"
-  bottom: "score_pool4"
-  bottom: "upscore2"
+  bottom: "kitti_score_pool4"
+  bottom: "kitti_upscore2"
   top: "score_pool4c"
   crop_param {
     axis: 2
@@ -541,7 +541,7 @@ layer {
 layer {
   name: "fuse_pool4"
   type: "Eltwise"
-  bottom: "upscore2"
+  bottom: "kitti_upscore2"
   bottom: "score_pool4c"
   top: "fuse_pool4"
   eltwise_param {
@@ -549,10 +549,10 @@ layer {
   }
 }
 layer {
-  name: "upscore_pool4"
+  name: "kitti_upscore_pool4"
   type: "Deconvolution"
   bottom: "fuse_pool4"
-  top: "upscore_pool4"
+  top: "kitti_upscore_pool4"
   param {
     lr_mult: 0
   }
@@ -566,8 +566,8 @@ layer {
 layer {
   name: "score_pool3c"
   type: "Crop"
-  bottom: "score_pool3"
-  bottom: "upscore_pool4"
+  bottom: "kitti_score_pool3"
+  bottom: "kitti_upscore_pool4"
   top: "score_pool3c"
   crop_param {
     axis: 2
@@ -577,7 +577,7 @@ layer {
 layer {
   name: "fuse_pool3"
   type: "Eltwise"
-  bottom: "upscore_pool4"
+  bottom: "kitti_upscore_pool4"
   bottom: "score_pool3c"
   top: "fuse_pool3"
   eltwise_param {
@@ -585,10 +585,10 @@ layer {
   }
 }
 layer {
-  name: "upscore8"
+  name: "kitti_upscore8"
   type: "Deconvolution"
   bottom: "fuse_pool3"
-  top: "upscore8"
+  top: "kitti_upscore8"
   param {
     lr_mult: 0
   }
@@ -602,7 +602,7 @@ layer {
 layer {
   name: "score"
   type: "Crop"
-  bottom: "upscore8"
+  bottom: "kitti_upscore8"
   bottom: "data"
   top: "score"
   crop_param {
